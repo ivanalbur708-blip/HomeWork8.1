@@ -1,163 +1,131 @@
-#include <iostream>
 
+#include <iostream>
 using namespace std;
 
-int MyStrLen(const char* string)
+int MyStrLen(const char* str)
 {
     int length = 0;
-    while (string[length] != '\0') length++;
+    while (str[length] != '\0')
+        length++;
     return length;
 }
 
-char* MyStrCpy(char* destination, const char* source)
+void DeleteAt(char* str, int index)
 {
-    int index = 0;
-    do
-    {
-        destination[index] = source[index];
-        index++;
-    } while (source[index - 1] != '\0');
-    return destination;
+    int length = MyStrLen(str);
+
+    if (index < 0 || index >= length)
+        return;
+
+    for (int i = index; i < length; i++)
+        str[i] = str[i + 1];
 }
 
-char* MyStrCat(char* destination, const char* source)
+void DeleteAll(char* str, char symbol)
 {
-    int destinationLength = MyStrLen(destination);
-    int sourceIndex = 0;
-    do
+    int writeIndex = 0;
+
+    for (int i = 0; str[i] != '\0'; i++)
     {
-        destination[destinationLength + sourceIndex] = source[sourceIndex];
-        sourceIndex++;
-    } while (source[sourceIndex - 1] != '\0');
-    return destination;
+        if (str[i] != symbol)
+            str[writeIndex++] = str[i];
+    }
+
+    str[writeIndex] = '\0';
 }
 
-char* MyStrChr(char* string, char symbol)
+void InsertAt(char* str, int capacity, int index, char symbol)
 {
-    for (int i = 0; ; i++)
+    int length = MyStrLen(str);
+
+    if (index < 0 || index > length || length >= capacity - 1)
+        return;
+
+    for (int i = length; i >= index; i--)
+        str[i + 1] = str[i];
+
+    str[index] = symbol;
+}
+
+void ReplaceDots(char* str)
+{
+    for (int i = 0; str[i] != '\0'; i++)
     {
-        if (string[i] == symbol) return string + i;
-        if (string[i] == '\0') return 0;
+        if (str[i] == '.')
+            str[i] = '!';
     }
 }
 
-char* MyStrStr(char* string, const char* substring)
+int CountSymbol(const char* str, char symbol)
 {
-    if (substring[0] == '\0') return string;
+    int count = 0;
 
-    for (int i = 0; string[i] != '\0'; i++)
+    for (int i = 0; str[i] != '\0'; i++)
     {
-        int j = 0;
-        while (substring[j] != '\0' && string[i + j] == substring[j]) j++;
-        if (substring[j] == '\0') return string + i;
+        if (str[i] == symbol)
+            count++;
     }
-    return 0;
-}
 
-bool IsLetter(char symbol)
-{
-    return (symbol >= 'A' && symbol <= 'Z') || (symbol >= 'a' && symbol <= 'z');
-}
-
-bool IsDigit(char symbol)
-{
-    return symbol >= '0' && symbol <= '9';
+    return count;
 }
 
 int main()
 {
-
+    const int SIZE = 256;
+    char str[SIZE];
+    int index;
+    char symbol;
 
     // Task 1
-    {
-        char text[256];
-        cout << "Enter a line: ";
-        cin.getline(text, 256);
+    cout << "Enter string: ";
+    cin.getline(str, SIZE);
 
-        for (int i = 0; text[i] != '\0'; i++)
-        {
-            if (text[i] == ' ') text[i] = '\t';
-        }
-        cout << text << '\n';
-    }
+    cout << "Enter index to delete: ";
+    cin >> index;
+    cin.ignore(10000, '\n');
+
+    DeleteAt(str, index);
+    cout << "Result: " << str << '\n';
 
     // Task 2
-    {
-        char text[256];
-        int letters = 0;
-        int digits = 0;
-        int other = 0;
+    cout << "Enter string: ";
+    cin.getline(str, SIZE);
 
-        cout << "Enter a line: ";
-        cin.getline(text, 256);
+    cout << "Enter symbol to delete: ";
+    cin.get(symbol);
+    cin.ignore(10000, '\n');
 
-        for (int i = 0; text[i] != '\0'; i++)
-        {
-            if (IsLetter(text[i])) letters++;
-            else if (IsDigit(text[i])) digits++;
-            else other++;
-        }
-
-        cout << "Letters: " << letters << "\nDigits: " << digits
-            << "\nOther: " << other << '\n';
-    }
+    DeleteAll(str, symbol);
+    cout << "Result: " << str << '\n';
 
     // Task 3
-    {
-        char sentence[256];
-        int wordCount = 0;
-        bool insideWord = false;
+    cout << "Enter string: ";
+    cin.getline(str, SIZE);
 
-        cout << "Enter a sentence: ";
-        cin.getline(sentence, 256);
+    cout << "Enter index: ";
+    cin >> index;
+    cin.ignore(10000, '\n');
 
-        for (int i = 0; sentence[i] != '\0'; i++)
-        {
-            if (sentence[i] != ' ' && sentence[i] != '\t')
-            {
-                if (!insideWord) wordCount++;
-                insideWord = true;
-            }
-            else
-            {
-                insideWord = false;
-            }
-        }
-        cout << "Words: " << wordCount << '\n';
-    }
+    cout << "Enter symbol: ";
+    cin.get(symbol);
+    cin.ignore(10000, '\n');
+
+    InsertAt(str, SIZE, index, symbol);
+    cout << "Result: " << str << '\n';
 
     // Task 4
-    {
-        char text[256];
-        cout << "Enter a line: ";
-        cin.getline(text, 256);
+    cout << "Enter string: ";
+    cin.getline(str, SIZE);
 
-        int length = MyStrLen(text);
-        bool palindrome = true;
-        for (int i = 0; i < length / 2; i++)
-        {
-            if (text[i] != text[length - 1 - i]) palindrome = false;
-        }
-        cout << (palindrome ? "Palindrome\n" : "Not a palindrome\n");
-    }
+    ReplaceDots(str);
+    cout << "Result: " << str << '\n';
 
     // Task 5
-    {
-        char first[256] = "Hello";
-        char second[256];
+    cout << "Enter string: ";
+    cin.getline(str, SIZE);
 
-        MyStrCpy(second, first);
-        MyStrCat(second, " world");
+    cout << "Enter symbol to count: ";
+    cin.get(symbol);
 
-        cout << "Length: " << MyStrLen(second) << '\n';
-        cout << "Copy and concatenation: " << second << '\n';
-
-        char* symbolPosition = MyStrChr(second, 'w');
-        char* substringPosition = MyStrStr(second, "world");
-        cout << "Symbol position: " << (symbolPosition == 0 ? -1 : symbolPosition - second) << '\n';
-        cout << "Substring position: " << (substringPosition == 0 ? -1 : substringPosition - second) << '\n';
-    }
-
-    return 0;
+    cout << "Count: " << CountSymbol(str, symbol) << '\n';
 }
-
